@@ -9,3 +9,7 @@
 8. Setup Prisma ORM
 9. Setup PostgreSQL (Choose pgAdmin 4 - PostgreSQL for local development and Neon for Cloud/Online Database): `postgresql://{username}:{password}@localhost:5432/{databaseName}?schema=public`
 10. Happy Coding!
+
+
+# QUICK START
+`npm run dev`
