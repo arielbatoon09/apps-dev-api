@@ -1,4 +1,4 @@
-export { createProductService, type CreateProductData } from './create-product';
-export { updateProductService, type UpdateProductData } from './update-product';
-export { getAllProductsService, getProductByIdService } from './get-product';
-export { softDeleteProductService, hardDeleteProductService, restoreProductService } from './delete-product';
+export { createProductService } from "./create-product";
+export { updateProductService, restoreProductService } from "./update-product";
+export { getAllProductsService, getAllActiveProductsService, getProductByIdService } from "./get-products";
+export { hardDeleteProductService, softDeleteProductService } from "./delete-product";

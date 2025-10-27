@@ -1,39 +1,53 @@
-import { ProductRepository } from '@/repositories/ProductRepository';
+import ProductRepository from "@/repositories/ProductRepository";
+import { ProductData } from "@/types/product";
 
-export interface UpdateProductData {
-  name?: string;
-  description?: string;
-  price?: number;
-  stock?: number;
-}
-
-export const updateProductService = async (id: string, data: UpdateProductData) => {
+// Update Product
+export async function updateProductService(id: string, data: ProductData) {
+  // Check if Product ID is provided
   if (!id) {
-    throw new Error('Product ID is required');
+    return { status: "error", message: "Product ID was not provided!" };
   }
 
-  // Check if product exists
+  // Check if the Product ID is existing in the Database
   const existingProduct = await ProductRepository.findById(id);
   if (!existingProduct) {
-    throw new Error('Product not found');
+    return { status: "error", message: "Product is not found!" };
   }
 
-  // Validate price and stock if provided
-  if (data.price !== undefined && data.price < 0) {
-    throw new Error('Price must be a positive number');
+  // Validate price and stock are valid numbers
+  if (data.price < 1 || data.stock < 1) {
+    return { status: "error", message: "Price / Stock are not valid numbers!" };
   }
 
-  if (data.stock !== undefined && data.stock < 0) {
-    throw new Error('Stock must be a positive number');
+  // Update the Product Data
+  const result = await ProductRepository.update(id, data);
+
+  return {
+    status: "success",
+    message: "Updated Product Successfully!",
+    data: result
+  }
+}
+
+// Restore Product / Activate Product
+export async function restoreProductService(id: string) {
+  // Check if Product ID is provided
+  if (!id) {
+    return { status: "error", message: "Product ID was not provided!" };
   }
 
-  // Prepare update data
-  const updateData: UpdateProductData = {};
-  if (data.name !== undefined) updateData.name = data.name.trim();
-  if (data.description !== undefined) updateData.description = data.description.trim();
-  if (data.price !== undefined) updateData.price = data.price;
-  if (data.stock !== undefined) updateData.stock = data.stock;
+  // Check if Product is existing in the Database
+  const existingProduct = await ProductRepository.findById(id);
+  if (!existingProduct) {
+    return { status: "error", message: "Product is not found!" };
+  }
 
-  // Update the product
-  return ProductRepository.update(id, updateData);
-};
+  // Restore Product
+  const result = await ProductRepository.restoreProduct(id);
+
+  return {
+    status: "success",
+    message: `Activated Product ID: ${id} Successfully!`,
+    data: result
+  }
+}

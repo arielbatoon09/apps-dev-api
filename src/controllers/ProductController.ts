@@ -1,87 +1,114 @@
 import { Request, Response } from 'express';
-import { createProductService, getAllProductsService, getProductByIdService, updateProductService, softDeleteProductService, hardDeleteProductService, restoreProductService } from '@/services/products';
+import {
+  createProductService,
+  updateProductService,
+  getAllProductsService,
+  getAllActiveProductsService,
+  hardDeleteProductService,
+  softDeleteProductService,
+  restoreProductService,
+  getProductByIdService
+} from "@/services/products";
 
-export const ProductController = {
-  async createProduct(req: Request, res: Response) {
-    try {
-      const product = await createProductService(req.body);
-      res.status(201).json(product);
-    } catch (err: any) {
-      res.status(400).json({ message: err.message });
-    }
-  },
+class ProductController {
+  // Get All Products
+  async getAllProducts(req: Request, res: Response) {
+    const result = await getAllProductsService();
 
-  async listProducts(req: Request, res: Response) {
-    try {
-      const products = await getAllProductsService();
-      res.json(products);
-    } catch (err: any) {
-      res.status(500).json({ message: err.message });
+    if (result.status === "error") {
+      return res.status(400).json(result);
     }
-  },
 
-  async getProductById(req: Request, res: Response) {
-    try {
-      const { id } = req.body;
-      if (!id) {
-        return res.status(400).json({ message: 'Product ID is required' });
-      }
-      const product = await getProductByIdService(id);
-      res.json(product);
-    } catch (err: any) {
-      res.status(404).json({ message: err.message });
-    }
-  },
-
-  async updateProduct(req: Request, res: Response) {
-    try {
-      const { id, ...updateData } = req.body;
-      if (!id) {
-        return res.status(400).json({ message: 'Product ID is required' });
-      }
-      const product = await updateProductService(id, updateData);
-      res.json(product);
-    } catch (err: any) {
-      res.status(400).json({ message: err.message });
-    }
-  },
-
-  async softDeleteProduct(req: Request, res: Response) {
-    try {
-      const { id } = req.body;
-      if (!id) {
-        return res.status(400).json({ message: 'Product ID is required' });
-      }
-      await softDeleteProductService(id);
-      res.status(204).send();
-    } catch (err: any) {
-      res.status(400).json({ message: err.message });
-    }
-  },
-
-  async hardDeleteProduct(req: Request, res: Response) {
-    try {
-      const { id } = req.body;
-      if (!id) {
-        return res.status(400).json({ message: 'Product ID is required' });
-      }
-      await hardDeleteProductService(id);
-      res.status(204).send();
-    } catch (err: any) {
-      res.status(400).json({ message: err.message });
-    }
-  },
-
-  async restoreProduct(req: Request, res: Response) {
-    try {
-      const { id } = req.body;
-      if (!id) {
-        return res.status(400).json({ message: 'Product ID is required' });
-      }
-      const product = await restoreProductService(id);
-      res.json(product);
-    } catch (err: any) {
-      res.status(400).json({ message: err.message });
-    }
+    return res.status(200).json(result);
   }
-};
+
+  // Get All Active Products
+  async getAllActiveProducts(req: Request, res: Response) {
+    const result = await getAllActiveProductsService();
+
+    if (result.status === "error") {
+      return res.status(400).json(result);
+    }
+
+    return res.status(200).json(result);
+  }
+
+  // Get Product By ID
+  async getProductById(req: Request, res: Response) {
+    const { id } = req.body;
+
+    const result = await getProductByIdService(id);
+
+    if (result.status === "error") {
+      return res.status(400).json(result);
+    }
+
+    res.status(200).json(result);
+  }
+
+  // Create Product
+  async createProduct(req: Request, res: Response) {
+    const result = await createProductService(req.body);
+
+    if (result.status === "error") {
+      return res.status(400).json(result);
+    }
+
+    return res.status(201).json(result);
+  }
+
+  // Update Product
+  async updateProduct(req: Request, res: Response) {
+    const { id, ...data } = req.body;
+
+    const result = await updateProductService(id, data);
+
+    if (result.status === "error") {
+      return res.status(400).json(result);
+    }
+
+    res.status(200).json(result);
+  }
+
+  // Hard Delete Product
+  async hardDeleteProduct(req: Request, res: Response) {
+    const { id } = req.body;
+
+    const result = await hardDeleteProductService(id);
+
+    if (result.status === "error") {
+      return res.status(400).json(result);
+    }
+
+    res.status(200).json(result);
+  }
+
+  // Soft Delete Product
+  async softDeleteProduct(req: Request, res: Response) {
+    const { id } = req.body;
+
+    const result = await softDeleteProductService(id);
+
+    if (result.status === "error") {
+      return res.status(400).json(result);
+    }
+
+    res.status(200).json(result);
+  }
+
+  // Restore Product
+  async restoreProduct(req: Request, res: Response) {
+    const { id } = req.body;
+
+    const result = await restoreProductService(id);
+
+    if (result.status === "error") {
+      return res.status(400).json(result);
+    }
+
+    res.status(200).json(result);
+  }
+
+}
+
+export default new ProductController();

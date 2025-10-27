@@ -1,62 +1,47 @@
-import { PrismaClient } from '@prisma/client';
-import { ProductRepository } from '@/repositories/ProductRepository';
+import ProductRepository from "@/repositories/ProductRepository";
 
-const prisma = new PrismaClient();
-
-export const softDeleteProductService = async (id: string) => {
+// Hard Delete Product Service
+export async function hardDeleteProductService(id: string) {
+  // Check if Product ID is provided
   if (!id) {
-    throw new Error('Product ID is required');
+    return { status: "error", message: "Product ID was not provided!" };
   }
 
-  // Check if product exists
+  // Check if Product is existing in the Database
   const existingProduct = await ProductRepository.findById(id);
   if (!existingProduct) {
-    throw new Error('Product not found');
+    return { status: "error", message: "Product is not found!" };
   }
 
-  // Check if product is already soft deleted
-  if (!existingProduct.isActive) {
-    throw new Error('Product is already deleted');
+  // Delete the Product from the Database
+  await ProductRepository.delete(id);
+
+  return {
+    status: "success",
+    message: `Deleted Product ID: ${id} Successfully!`,
+    data: null
   }
+}
 
-  // Perform soft delete
-  return ProductRepository.delete(id);
-};
-
-export const hardDeleteProductService = async (id: string) => {
+// Soft Delete Product Service
+export async function softDeleteProductService(id: string) {
+  // Check if Product ID is provided
   if (!id) {
-    throw new Error('Product ID is required');
+    return { status: "error", message: "Product ID was not provided!" };
   }
 
-  // Check if product exists
-  const existingProduct = await prisma.product.findUnique({ where: { id } });
+  // Check if Product is existing in the Database
+  const existingProduct = await ProductRepository.findById(id);
   if (!existingProduct) {
-    throw new Error('Product not found');
+    return { status: "error", message: "Product is not found!" };
   }
 
-  // Perform hard delete
-  return prisma.product.delete({ where: { id } });
-};
+  // Deactivate Product from the Database
+  await ProductRepository.softDelete(id);
 
-export const restoreProductService = async (id: string) => {
-  if (!id) {
-    throw new Error('Product ID is required');
+  return {
+    status: "success",
+    message: `Deactivated Product ID: ${id} Successfully!`,
+    data: null
   }
-
-  // Check if product exists
-  const existingProduct = await prisma.product.findUnique({ where: { id } });
-  if (!existingProduct) {
-    throw new Error('Product not found');
-  }
-
-  // Check if product is already active
-  if (existingProduct.isActive) {
-    throw new Error('Product is already active');
-  }
-
-  // Restore the product
-  return prisma.product.update({ 
-    where: { id }, 
-    data: { isActive: true } 
-  });
-};
+}
