@@ -13,7 +13,8 @@ import {
 class ProductController {
   // Get All Products
   async getAllProducts(req: Request, res: Response) {
-    const result = await getAllProductsService();
+    const userId = (req as any).user?.id as string;
+    const result = await getAllProductsService(userId);
 
     if (result.status === "error") {
       return res.status(400).json(result);
@@ -48,7 +49,8 @@ class ProductController {
 
   // Create Product
   async createProduct(req: Request, res: Response) {
-    const result = await createProductService(req.body);
+    const userId = (req as any).user?.id as string;
+    const result = await createProductService(req.body, userId);
 
     if (result.status === "error") {
       return res.status(400).json(result);
@@ -60,8 +62,8 @@ class ProductController {
   // Update Product
   async updateProduct(req: Request, res: Response) {
     const { id, ...data } = req.body;
-
-    const result = await updateProductService(id, data);
+    const userId = (req as any).user?.id as string;
+    const result = await updateProductService(id, data, userId);
 
     if (result.status === "error") {
       return res.status(400).json(result);
@@ -73,8 +75,8 @@ class ProductController {
   // Hard Delete Product
   async hardDeleteProduct(req: Request, res: Response) {
     const { id } = req.body;
-
-    const result = await hardDeleteProductService(id);
+    const userId = (req as any).user?.id as string;
+    const result = await hardDeleteProductService(id, userId);
 
     if (result.status === "error") {
       return res.status(400).json(result);
@@ -86,8 +88,8 @@ class ProductController {
   // Soft Delete Product
   async softDeleteProduct(req: Request, res: Response) {
     const { id } = req.body;
-
-    const result = await softDeleteProductService(id);
+    const userId = (req as any).user?.id as string;
+    const result = await softDeleteProductService(id, userId);
 
     if (result.status === "error") {
       return res.status(400).json(result);
@@ -99,8 +101,8 @@ class ProductController {
   // Restore Product
   async restoreProduct(req: Request, res: Response) {
     const { id } = req.body;
-
-    const result = await restoreProductService(id);
+    const userId = (req as any).user?.id as string;
+    const result = await restoreProductService(id, userId);
 
     if (result.status === "error") {
       return res.status(400).json(result);

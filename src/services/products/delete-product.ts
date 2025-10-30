@@ -1,7 +1,7 @@
 import ProductRepository from "@/repositories/ProductRepository";
 
 // Hard Delete Product Service
-export async function hardDeleteProductService(id: string) {
+export async function hardDeleteProductService(id: string, userId: string) {
   // Check if Product ID is provided
   if (!id) {
     return { status: "error", message: "Product ID was not provided!" };
@@ -11,6 +11,9 @@ export async function hardDeleteProductService(id: string) {
   const existingProduct = await ProductRepository.findById(id);
   if (!existingProduct) {
     return { status: "error", message: "Product is not found!" };
+  }
+  if (existingProduct.userId !== userId) {
+    return { status: "error", message: "You do not own this product." };
   }
 
   // Delete the Product from the Database
@@ -24,7 +27,7 @@ export async function hardDeleteProductService(id: string) {
 }
 
 // Soft Delete Product Service
-export async function softDeleteProductService(id: string) {
+export async function softDeleteProductService(id: string, userId: string) {
   // Check if Product ID is provided
   if (!id) {
     return { status: "error", message: "Product ID was not provided!" };
@@ -34,6 +37,9 @@ export async function softDeleteProductService(id: string) {
   const existingProduct = await ProductRepository.findById(id);
   if (!existingProduct) {
     return { status: "error", message: "Product is not found!" };
+  }
+  if (existingProduct.userId !== userId) {
+    return { status: "error", message: "You do not own this product." };
   }
 
   // Deactivate Product from the Database

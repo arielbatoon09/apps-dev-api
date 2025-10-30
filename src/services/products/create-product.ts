@@ -2,7 +2,7 @@ import ProductRepository from "@/repositories/ProductRepository";
 import { ProductData } from "@/types/product";
 
 
-export async function createProductService(data: ProductData) {
+export async function createProductService(data: ProductData, userId: string) {
   // Validate required fields
   if (!data.name || !data.description || data.price == null || data.stock == null) {
     return { status: "error", message: "Missing fields!" };
@@ -19,6 +19,7 @@ export async function createProductService(data: ProductData) {
     description: data.description,
     price: data.price,
     stock: data.stock,
+    userId,
   })
 
   return {

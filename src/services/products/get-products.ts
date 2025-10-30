@@ -1,8 +1,8 @@
 import ProductRepository from "@/repositories/ProductRepository";
 
 // Get All Products regardles if Active / Not
-export async function getAllProductsService() {
-  const result = await ProductRepository.findAll();
+export async function getAllProductsService(userId: string) {
+  const result = await ProductRepository.findAllByUser(userId);
 
   return {
     status: "success",

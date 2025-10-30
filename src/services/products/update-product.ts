@@ -2,7 +2,7 @@ import ProductRepository from "@/repositories/ProductRepository";
 import { ProductData } from "@/types/product";
 
 // Update Product
-export async function updateProductService(id: string, data: ProductData) {
+export async function updateProductService(id: string, data: ProductData, userId: string) {
   // Check if Product ID is provided
   if (!id) {
     return { status: "error", message: "Product ID was not provided!" };
@@ -12,6 +12,9 @@ export async function updateProductService(id: string, data: ProductData) {
   const existingProduct = await ProductRepository.findById(id);
   if (!existingProduct) {
     return { status: "error", message: "Product is not found!" };
+  }
+  if (existingProduct.userId !== userId) {
+    return { status: "error", message: "You do not own this product." };
   }
 
   // Validate price and stock are valid numbers
@@ -30,7 +33,7 @@ export async function updateProductService(id: string, data: ProductData) {
 }
 
 // Restore Product / Activate Product
-export async function restoreProductService(id: string) {
+export async function restoreProductService(id: string, userId: string) {
   // Check if Product ID is provided
   if (!id) {
     return { status: "error", message: "Product ID was not provided!" };
@@ -40,6 +43,9 @@ export async function restoreProductService(id: string) {
   const existingProduct = await ProductRepository.findById(id);
   if (!existingProduct) {
     return { status: "error", message: "Product is not found!" };
+  }
+  if (existingProduct.userId !== userId) {
+    return { status: "error", message: "You do not own this product." };
   }
 
   // Restore Product

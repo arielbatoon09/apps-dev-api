@@ -1,18 +1,17 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { ProductData } from "@/types/product";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/shared/prisma";
 
 class ProductRepository {
-  async findAll() {
-    return await prisma.product.findMany({ orderBy: { name: "asc" } });
+  async findAllByUser(userId: string) {
+    return await prisma.product.findMany({ where: { userId }, orderBy: { name: "asc" } });
   }
 
   async findAllActive() {
     return await prisma.product.findMany({ where: { isActive: true }, orderBy: { name: "asc" } });
   }
 
-  async create(data: ProductData) {
+  async create(data: Prisma.ProductUncheckedCreateInput) {
     return await prisma.product.create({ data });
   }
 
